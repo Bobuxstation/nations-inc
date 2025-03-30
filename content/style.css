@@ -1,0 +1,137 @@
+* {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  color: white;
+  font-family: monospace;
+  box-sizing: border-box;
+  outline: none;
+}
+
+html {
+  background: #2d2d2d;
+}
+
+.ourStats {
+  position: absolute;
+  background: #2d2d2d;
+  width: 100%;
+  box-shadow: 0px 0px 2px #000000;
+}
+
+.ourStats span {
+  padding: 10px;
+}
+
+.cityStats {
+  position: absolute;
+  background: #2d2d2d;
+  padding: 15px;
+  margin: 15px;
+  box-shadow: 0px 0px 2px #000000;
+  margin-top: 90px;
+  border-radius: 5px;
+  height: fit-content !important;
+  width: fit-content !important;
+}
+
+.cityStats button, .cityStats select, .cityStats input {
+  background: #3d3d3d;
+  padding: 5px;
+  display: block;
+  margin-top: 15px;
+  width: 100%;
+  text-align: left;
+}
+
+.ourStats select {
+  background: #3d3d3d;
+  border: none;
+  padding: 1px;
+}
+
+.titlebar {
+  margin-top: -15px;
+  margin-left: -15px;
+  padding: 5px;
+  box-sizing: border-box;
+  background: #3d3d3d;
+  width: calc(100% + 30px);
+  margin-bottom: 15px;
+}
+
+.titlebar button {
+  width: 29px;
+  text-align: center;
+  margin: 0;
+  float: right;
+}
+
+marquee {
+  position: absolute;
+  background: #3d3d3d;
+  padding: 10px;
+  margin-top: 38.5px;
+}
+
+.notification {
+  position: absolute;
+  z-index: 2;
+  padding: 10px;
+  bottom: 0;
+  right: 0;
+  margin: 15px;
+  background: #2d2d2d;
+  animation-name: slideInRight;
+  animation-duration: 0.5s;
+  animation-fill-mode: both;
+}
+
+@keyframes slideInRight {
+  0% {
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
+    visibility: visible;
+  }
+  100% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+}
+
+#loadingScreen {
+  position: absolute;
+  z-index: 999;
+  backdrop-filter: blur(10px);
+  height: 100vh;
+  width: 100vw;
+}
+
+.title {
+  padding: 25px;
+  box-shadow: 250px 0px 3000px 0px rgba(0,0,0,0.75) inset;
+  height: 100vh;
+  position: absolute;
+  z-index: 1;
+  width: 100vw;
+}
+
+.title h1 {
+  font-size: 100px;
+}
+
+.title span {
+  font-size: 50px;
+  display: block;
+  margin: 15px;
+  cursor: pointer;
+}
+
+#ablogo {
+  position: absolute;
+  z-index: 999;
+  bottom: 0;
+  margin: 25px;
+  width: 125px;
+  margin-bottom: 7.5px;
+}
