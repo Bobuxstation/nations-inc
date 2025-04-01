@@ -20,7 +20,7 @@ html {
 }
 
 .ourStats span {
-  padding: 10px;
+  padding: 11.5px;
 }
 
 .cityStats {
@@ -35,7 +35,9 @@ html {
   width: fit-content !important;
 }
 
-.cityStats button, .cityStats select, .cityStats input {
+.cityStats button,
+.cityStats select,
+.cityStats input {
   background: #3d3d3d;
   padding: 5px;
   display: block;
@@ -48,6 +50,7 @@ html {
   background: #3d3d3d;
   border: none;
   padding: 1px;
+  cursor: pointer;
 }
 
 .titlebar {
@@ -93,6 +96,7 @@ marquee {
     transform: translateX(100%);
     visibility: visible;
   }
+
   100% {
     -webkit-transform: translateX(0);
     transform: translateX(0);
@@ -109,15 +113,14 @@ marquee {
 
 .title {
   padding: 25px;
-  box-shadow: 250px 0px 3000px 0px rgba(0,0,0,0.75) inset;
+  box-shadow: 250px 0px 3000px 0px rgba(0, 0, 0, 0.75) inset;
   height: 100vh;
   position: absolute;
   z-index: 1;
   width: 100vw;
-}
-
-.title h1 {
-  font-size: 100px;
+  display: flex;
+  justify-content: center;
+  place-items: center;
 }
 
 .title span {
@@ -130,8 +133,28 @@ marquee {
 #ablogo {
   position: absolute;
   z-index: 999;
-  bottom: 0;
   margin: 25px;
-  width: 125px;
-  margin-bottom: 7.5px;
+  width: 250px;
+  animation-name: fadeIn;
+  animation-duration: 1s;
+  animation-fill-mode: both;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+#guidebook {
+  background: #1d1d1d;
+  cursor: pointer;
+}
+
+#guidebook:hover {
+  background: #333333;
 }

@@ -13,11 +13,22 @@ function clickedTile(foundObject, tile) {
 		tile.setTexture("sprCapital");
 		tile.text.setText(myOwnCountry);
 		document.getElementById('selectCountry').innerText = myOwnCountry;
+
+		closeAllWindows()
+		newDialog(`A new start`, content.nationSelected, "")
 	} else if (myOwnCountry == foundObject.countryName) {
+		//tutorial
+		document.getElementById('tutorManage').style.display = 'block';
+		document.getElementById('tutorDiplomacy').style.display = 'none';
+		document.getElementById('tutorConquered').style.display = 'none';
+
+		//window
+		closeAllWindows()
 		document.getElementById('cityStatWindow').style.display = 'block';
 		document.getElementById('selectCityName').innerText = foundObject.countryName;
 		document.getElementById('selectCountryName').innerText = 'Country';
 
+		//buttons
 		document.getElementById('infantrybtn').style.display = 'block';
 		document.getElementById('checkinventory').style.display = 'block';
 		document.getElementById('managefactories').style.display = 'block';
@@ -26,23 +37,33 @@ function clickedTile(foundObject, tile) {
 		document.getElementById('declarewarbtn').style.display = 'none';
 
 		document.getElementById('checkinventory').onclick = function () {
-			document.getElementById('cityStatWindow').style.display = 'none';
+			closeAllWindows()
 			document.getElementById('cityInventory').style.display = 'block'
 			document.getElementById('inventoryCountryName').innerText = foundObject.countryName;
 		}
 
 		document.getElementById('infantrybtn').onclick = function () {
+			closeAllWindows()
 			manageDivisions(foundObject, tile);
 		}
 
 		document.getElementById('managefactories').onclick = function () {
+			closeAllWindows()
 			manageFactories(foundObject);
 		}
 	} else if (foundObject.isConquered) {
+		//tutorial
+		document.getElementById('tutorManage').style.display = 'none';
+		document.getElementById('tutorDiplomacy').style.display = 'none';
+		document.getElementById('tutorConquered').style.display = 'block';
+
+		//window
+		closeAllWindows()
 		document.getElementById('cityStatWindow').style.display = 'block';
 		document.getElementById('selectCityName').innerText = foundObject.countryName;
 		document.getElementById('selectCountryName').innerText = 'Country';
 
+		//buttons
 		document.getElementById('infantrybtn').style.display = 'block';
 		document.getElementById('checkinventory').style.display = 'none';
 		document.getElementById('managefactories').style.display = 'block';
@@ -51,14 +72,22 @@ function clickedTile(foundObject, tile) {
 		document.getElementById('declarewarbtn').style.display = 'none';
 
 		document.getElementById('infantrybtn').onclick = function () {
+			closeAllWindows()
 			manageDivisions(foundObject, tile);
 		}
 
 		document.getElementById('managefactories').onclick = function () {
+			closeAllWindows()
 			manageFactories(foundObject);
 		}
 
 	} else if (foundObject.isExplored) {
+		//tutorial
+		document.getElementById('tutorManage').style.display = 'none';
+		document.getElementById('tutorDiplomacy').style.display = 'block';
+		document.getElementById('tutorConquered').style.display = 'none';
+
+		//buttons
 		document.getElementById('managefactories').style.display = 'none';
 		document.getElementById('checkinventory').style.display = 'none';
 		document.getElementById('infantrybtn').style.display = 'none';
@@ -66,17 +95,20 @@ function clickedTile(foundObject, tile) {
 		document.getElementById('improverelation').style.display = 'block';
 		document.getElementById('tradewithcountry').style.display = 'block';
 
+		//window
+		closeAllWindows()
 		document.getElementById('cityStatWindow').style.display = 'block';
 		document.getElementById('selectCityName').innerText = foundObject.countryName;
 		document.getElementById('selectCountryName').innerText = 'Country Strength: ' + foundObject.divisions[Object.keys(foundObject.divisions)[0]].strength;
 
 		document.getElementById('declarewarbtn').onclick = function () {
+			closeAllWindows()
 			document.getElementById('invadewindow').style.display = 'block';
 			document.getElementById('countryToInvade').innerText = foundObject.countryName;
-			document.getElementById('cityStatWindow').style.display = 'none';
 		}
 
 		document.getElementById('tradewithcountry').onclick = function () {
+			closeAllWindows()
 			doTrading(foundObject.countryName, foundObject.tradeluck, foundObject);
 		}
 
@@ -88,7 +120,7 @@ function clickedTile(foundObject, tile) {
 		}
 
 		document.getElementById('invadeyes').onclick = function () {
-			document.getElementById('invadewindow').style.display = 'none'
+			closeAllWindows()
 			if (countriesinwarwith.find(obj => obj.countryName === foundObject.countryName)) return;
 
 			let text = document.createElement('span')
@@ -97,6 +129,7 @@ function clickedTile(foundObject, tile) {
 			countriesinwarwith.push(foundObject)
 		}
 	} else {
+		closeAllWindows()
 		document.getElementById('sendExpedition').style.display = 'block';
 		document.getElementById('expyes').onclick = function () {
 			document.getElementById('sendExpedition').style.display = 'none';
@@ -109,7 +142,6 @@ function manageDivisions(foundObject, tile) {
 	var divisionData = foundObject.divisions;
 	if (foundObject.countryName == myOwnCountry) divisionData = myCountryValues.divisions;
 
-	document.getElementById('cityStatWindow').style.display = 'none';
 	document.getElementById('divisionManagement').style.display = 'block'
 	document.getElementById('divisionCountryName').innerText = foundObject.countryName;
 
@@ -171,7 +203,6 @@ function manageFactories(foundObject) {
 	var factoryData = foundObject.factories;
 	if (foundObject.countryName == myOwnCountry) factoryData = myCountryValues.factories;
 
-	document.getElementById('cityStatWindow').style.display = 'none';
 	document.getElementById('cityFactories').style.display = 'block'
 	document.getElementById('factoryCountryName').innerText = foundObject.countryName;
 

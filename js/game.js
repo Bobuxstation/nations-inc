@@ -16,7 +16,6 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
-$(".cityStats").draggable({ handle: ".titlebar", containment: "#window" });
 
 window.addEventListener("resize", () => {
   game.scale.resize(window.innerWidth, window.innerHeight);

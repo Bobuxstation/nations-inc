@@ -24,6 +24,10 @@
 
 <body id="window">
   <div class="ourStats" id="ourStats" style="display: none;">
+    <!-- <span style="float: left;;" id="guidebook">
+      Guidebook
+    </span> -->
+
     <span style="float: left;">
       Conquered: <a id="nationsConquered">0</a> |
       Factories: <a id="factoriesOwned">0</a> |
@@ -31,7 +35,7 @@
     </span>
 
     <span style="float: right; background: #008000; padding: 12px;">Treasury: $<a id="mymoney">0</a></span>
-    <span style="float: right;">
+    <span style="float: right; padding: 10px;">
       <select onchange="gameSpeed = this.value">
         <option value="1000">1x</option>
         <option value="500">1.5x</option>
@@ -42,12 +46,15 @@
   </div>
 
   <marquee id="news" style="visibility: hidden;">
-    << Nations >>
+    << Nations Inc >>
   </marquee>
 
   <div class="cityStats" id="cityStatWindow" style="display: none;">
     <div class="titlebar">
       <button onclick="this.parentNode.parentNode.style.display = 'none'">X</button>
+      <button id="tutorManage" onclick="newDialog('Managing your country', content.manage, '')">?</button>
+      <button id="tutorDiplomacy" onclick="newDialog('Interacting with other nations', content.diplomacy, '')">?</button>
+      <button id="tutorConquered" onclick="newDialog('Managing conquered nations', content.conquered, '')">?</button>
     </div>
 
     <h1 id="selectCityName">City Name</h1>
@@ -65,6 +72,7 @@
   <div class="cityStats" id="cityInventory" style="display: none;">
     <div class="titlebar">
       <button onclick="this.parentNode.parentNode.style.display = 'none'">X</button>
+      <button onclick="newDialog('Resources', content.resources, '')">?</button>
     </div>
 
     <h1>Inventory</h1>
@@ -75,6 +83,7 @@
   <div class="cityStats" id="cityFactories" style="display: none;">
     <div class="titlebar">
       <button onclick="this.parentNode.parentNode.style.display = 'none'">X</button>
+      <button onclick="newDialog('Factories', content.factories, '')">?</button>
     </div>
 
     <h1>Factories</h1>
@@ -86,6 +95,7 @@
   <div class="cityStats" id="divisionManagement" style="display: none;">
     <div class="titlebar">
       <button onclick="this.parentNode.parentNode.style.display = 'none'">X</button>
+      <button onclick="newDialog('Managing Divisions', content.divisions, '')">?</button>
     </div>
 
     <h1>My Divisions</h1>
@@ -122,6 +132,7 @@
   <div class="cityStats" id="tradewindow" style="display: none;">
     <div class="titlebar">
       <button onclick="this.parentNode.parentNode.style.display = 'none'">X</button>
+      <button onclick="newDialog('Trading', content.trading, '')">?</button>
     </div>
 
     <h1 id="tradetitle">Trade</h1>
@@ -134,11 +145,12 @@
   <div class="cityStats" id="manageDivision" style="display: none;">
     <div class="titlebar">
       <button onclick="this.parentNode.parentNode.style.display = 'none'">X</button>
+      <button onclick="newDialog('Division', content.division, '')">?</button>
     </div>
 
     <h1>Manage Division</h1>
     <p id="divisionDescription">Description</p>
-    
+
     <div id="atWar">
       <div id="invadeOption">
         <select id="countriesinwarwith"></select>
@@ -146,16 +158,28 @@
       </div>
       <button id="upgradeDivision">⬆️ Upgrade ($10,000)</button>
     </div>
-    
+
     <div id="atWar2"></div>
   </div>
 
+  <div id="tutorials"></div>
+
   <div id="loadingScreen">
     <div class="title">
-      <h1>Nations Inc</h1>
-      <a onclick="startGame()"><span>Play</span></a>
+      <div class="cityStats" id="buttons" style="display: none; margin-top: 15px;">
+        <div class="titlebar">
+          <button>X</button>
+        </div>
+    
+        <h1>Nations Inc</h1>
+        <button onclick="startGame()">Start Game</button>
+        <button>...</button>
+        <button>...</button>
+        <button>...</button>
+        <button>...</button>
+      </div>
+      <img id="ablogo" style="display: none;" src="content/ABLOGO.png">
     </div>
-    <img id="ablogo" src="content/ABLOGO.png">
   </div>
 </body>
 

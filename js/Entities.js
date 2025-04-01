@@ -87,6 +87,7 @@ class Tile extends Phaser.GameObjects.Sprite {
       }
 
       this.on('pointerdown', function (pointer) {
+        if (pointer.downElement.tagName != "CANVAS") return;
         clickedTile(foundObject, this)
       });
 
