@@ -46,14 +46,15 @@
   </div>
 
   <marquee id="news" style="visibility: hidden;">
-    << Nations Inc >>
+    << Nations Inc>>
   </marquee>
 
   <div class="cityStats" id="cityStatWindow" style="display: none;">
     <div class="titlebar">
       <button onclick="this.parentNode.parentNode.style.display = 'none'">X</button>
       <button id="tutorManage" onclick="newDialog('Managing your country', content.manage, '')">?</button>
-      <button id="tutorDiplomacy" onclick="newDialog('Interacting with other nations', content.diplomacy, '')">?</button>
+      <button id="tutorDiplomacy"
+        onclick="newDialog('Interacting with other nations', content.diplomacy, '')">?</button>
       <button id="tutorConquered" onclick="newDialog('Managing conquered nations', content.conquered, '')">?</button>
     </div>
 
@@ -148,18 +149,39 @@
       <button onclick="newDialog('Division', content.division, '')">?</button>
     </div>
 
-    <h1>Manage Division</h1>
+    <h1 id="divisionName">Manage Division</h1>
     <p id="divisionDescription">Description</p>
 
+    <br>
+
     <div id="atWar">
+      <p>Upgrade Cost:
+      <ul id="divisionUpgradeCost"></ul>
+      </p>
       <div id="invadeOption">
         <select id="countriesinwarwith"></select>
         <button id="invadeselectedbtn">➡️ Invade</button>
       </div>
-      <button id="upgradeDivision">⬆️ Upgrade ($10,000)</button>
+      <button id="upgradeDivision">⬆️ Upgrade</button>
     </div>
 
     <div id="atWar2"></div>
+  </div>
+
+  <div class="cityStats" id="manageFactory" style="display: none;">
+    <div class="titlebar">
+      <button onclick="this.parentNode.parentNode.style.display = 'none'">X</button>
+      <button onclick="newDialog('Manage Factory', content.manageFactory, '')">?</button>
+    </div>
+
+    <h1 id="factoryname">Factory Name</h1>
+    <p id="factoryLevel">Level: 1</p>
+
+    <br>
+    <p>Upgrade Cost:
+    <ul id="upgradeCost"></ul>
+    </p>
+    <button id="upgradeFactory">⬆️ Upgrade</button>
   </div>
 
   <div id="tutorials"></div>
@@ -170,7 +192,7 @@
         <div class="titlebar">
           <button>X</button>
         </div>
-    
+
         <h1>Nations Inc</h1>
         <button onclick="startGame()">Start Game</button>
         <button>...</button>

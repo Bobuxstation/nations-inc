@@ -129,10 +129,11 @@ function clickedTile(foundObject, tile) {
 			countriesinwarwith.push(foundObject)
 		}
 	} else {
+		// if country is unexplored
 		closeAllWindows()
 		document.getElementById('sendExpedition').style.display = 'block';
 		document.getElementById('expyes').onclick = function () {
-			document.getElementById('sendExpedition').style.display = 'none';
+			closeAllWindows()
 			march(foundObject.xPosition, foundObject.yPosition, myCountryValues.xPosition, myCountryValues.yPosition, true, 0, foundObject, tile)
 		}
 	}
@@ -161,19 +162,44 @@ function manageDivisions(foundObject, tile) {
 			elem.innerText = value.name + " (" + value.strength + ")";
 			document.getElementById("divisionList").appendChild(elem);
 
+			function calcDivisionUpgradePrice() {
+				document.getElementById("divisionDescription").innerText = `Level: ${value.strength}`;
+				document.getElementById('divisionUpgradeCost').innerHTML = ""
+
+				let upgradePrice = value.strength * 10000;
+				let steelCost = value.strength * 10;
+				let goodsCost = value.strength * 5;
+
+				let li1 = document.createElement('li')
+				li1.innerText = `$${upgradePrice.toLocaleString()}`
+				document.getElementById('divisionUpgradeCost').appendChild(li1)
+
+				let li2 = document.createElement('li')
+				li2.innerText = `${steelCost} Steel`
+				document.getElementById('divisionUpgradeCost').appendChild(li2)
+
+				let li3 = document.createElement('li')
+				li3.innerText = `${goodsCost} Goods`
+				document.getElementById('divisionUpgradeCost').appendChild(li3)
+			}
+
 			elem.onclick = function () {
-				document.getElementById('divisionManagement').style.display = 'none';
+				closeAllWindows()
+				calcDivisionUpgradePrice()
 				document.getElementById('manageDivision').style.display = 'block';
-				document.getElementById('divisionDescription').innerText = `${value.name} (${value.strength})`;
-				document.getElementById('upgradeDivision').innerText = `⬆️ Upgrade ($${(10000 * value.strength).toLocaleString()})`;
+				document.getElementById('divisionName').innerText = `${value.name}`;
+
 				document.getElementById('upgradeDivision').onclick = function () {
-					if (myCountryValues.money > 10000 * value.strength) {
-						value.strength += 1;
+					if (myCountryValues.money > 10000 * value.strength && myCountryValues.inventory["Steel"] > value.strength * 10 && myCountryValues.inventory["Goods"] > value.strength * 5) {
 						myCountryValues.money -= 10000 * value.strength;
+						myCountryValues.inventory["Steel"] -= value.strength * 10;
+						myCountryValues.inventory["Goods"] -= value.strength * 5;
+						value.strength += 1;
+						refreshDivisions()
+						calcDivisionUpgradePrice()
+					} else {
+						newNotification("You do not have enough money to upgrade!")
 					}
-					document.getElementById('divisionDescription').innerText = `${value.name} (${value.strength})`;
-					document.getElementById('upgradeDivision').innerText = `⬆️ Upgrade ($${(10000 * value.strength).toLocaleString()})`;
-					refreshDivisions()
 				}
 
 				if (countriesinwarwith.length == 0) {
@@ -181,6 +207,7 @@ function manageDivisions(foundObject, tile) {
 				} else {
 					document.getElementById("invadeOption").style.display = 'block';
 					document.getElementById("countriesinwarwith").innerHTML = ""
+
 					countriesinwarwith.forEach((country) => {
 						let elem = document.createElement('option');
 						elem.innerText = country.countryName;
@@ -189,7 +216,7 @@ function manageDivisions(foundObject, tile) {
 
 					document.getElementById("invadeselectedbtn").onclick = function () {
 						let enemyData = towns.find(obj => obj.countryName === document.getElementById("countriesinwarwith").value);
-						document.getElementById('manageDivision').style.display = 'none';
+						closeAllWindows()
 						march(enemyData.xPosition, enemyData.yPosition, foundObject.xPosition, foundObject.yPosition, false, value, enemyData, tile)
 					}
 				}
@@ -211,8 +238,42 @@ function manageFactories(foundObject) {
 		let value = factoryData[key];
 		let elem = document.createElement('button');
 
-		elem.innerText = key + " (" + value + ")";
+		elem.innerText = key + " (" + value.generates + ")";
 		document.getElementById("factoryList").appendChild(elem);
+
+		function calcUpgradePrice() {
+			document.getElementById("factoryLevel").innerText = `Level: ${value.level}`;
+
+			let upgradePrice = value.level * 10000;
+			let upgradeResources = value.level * 10;
+			document.getElementById('upgradeCost').innerHTML = ""
+
+			let li1 = document.createElement('li')
+			li1.innerText = `$${upgradePrice.toLocaleString()}`
+			document.getElementById('upgradeCost').appendChild(li1)
+
+			let li2 = document.createElement('li')
+			li2.innerText = `${upgradeResources} Steel`
+			document.getElementById('upgradeCost').appendChild(li2)
+		}
+
+		elem.onclick = function () {
+			closeAllWindows()
+			document.getElementById("manageFactory").style.display = 'block';
+			document.getElementById("factoryname").innerText = key;
+
+			calcUpgradePrice()
+			document.getElementById("upgradeFactory").onclick = function () {
+				if (myCountryValues.money > 10000 * value.level && myCountryValues.inventory["Steel"] > value.level * 10) {
+					myCountryValues.money -= 10000 * value.level;
+					myCountryValues.inventory["Steel"] -= value.level * 10;
+					value.level += 1;
+					calcUpgradePrice()
+				} else {
+					newNotification("You do not have enough money or resources to upgrade!")
+				}
+			}
+		}
 	})
 }
 
@@ -250,7 +311,7 @@ function doTrading(countryname, luck, country) {
 			myCountryValues.inventory[item] -= parseInt(document.getElementById("tradeAmount").value)
 			country.inventory[item] += parseInt(document.getElementById("tradeAmount").value)
 		} else {
-			newNotification("You do not have enough materials to trade!")
+			newNotification("You do not have enough money or resources to upgrade!")
 		}
 	}
 
