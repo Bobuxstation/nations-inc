@@ -42,16 +42,11 @@ function newDialog(heading, content, image) {
 
   let headingElem = document.createElement('h1')
   headingElem.innerText = heading
-  headingElem.style.textAlign = "center"
   headingElem.style.width = '400px'
   windowElem.appendChild(headingElem)
 
-  let divider = document.createElement('br')
-  windowElem.appendChild(divider)
-
   let contentElem = document.createElement('p')
   contentElem.innerText = content
-  contentElem.style.textAlign = "center"
   contentElem.style.width = '400px'
   windowElem.appendChild(contentElem)
 
@@ -190,7 +185,7 @@ function startGame() {
   earningsLoop()
 
   setTimeout(() => {
-    newDialog("Short Introduction to Nations", content.intro, "")
+    newDialog("Welcome to Nations!", content.intro, "")
   }, 250);
 }
 
