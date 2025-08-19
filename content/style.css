@@ -46,6 +46,10 @@ html {
   text-align: left;
 }
 
+.cityStats button:disabled {
+  color: gray;
+}
+
 .ourStats select {
   background: #3d3d3d;
   border: none;
@@ -150,15 +154,27 @@ marquee {
   }
 }
 
-#guidebook {
+#savegame {
   background: #1d1d1d;
   cursor: pointer;
 }
 
-#guidebook:hover {
+#savegame:hover {
   background: #333333;
 }
 
 ul {
   list-style: inside;
+}
+
+#divisions {
+  position: absolute;
+  width: fit-content;
+  right: 5px;
+  bottom: 5px;
+}
+
+#divisions button {
+  background:#2d2d2d;
+  padding: 10px;
 }

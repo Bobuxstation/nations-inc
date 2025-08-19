@@ -1,11 +1,12 @@
 class Chunk {
-  constructor(scene, x, y, seed) {
+  constructor(scene, x, y, seed, id) {
     this.scene = scene;
     this.x = x;
     this.y = y;
     this.tiles = this.scene.add.group();
     this.isLoaded = false;
     this.seed = seed;
+    this.chunkseed = id;
   }
 
   unload() {
@@ -16,25 +17,41 @@ class Chunk {
   }
 
   createTownData(tileX, tileY) {
+    var customSeed = parseInt(`${this.chunkseed}${tileX}${tileY}${this.seed}`)
+    
+    faker.seed(customSeed);
     var cityName = faker.address.city();
-    var citySecondName = faker.address.city();
-    var divisionGen = randomizeDivisions(1, false)
-    var randomresourceandfactories = randomizeFactoriesAndResources(divisionGen);
-    var tradeLuck = Math.max(Math.floor(Math.random() * 10), 1);
-    var money = Math.max(Math.floor(Math.random() * 10_000_000), 1);
+
+    var divisionGen = randomizeDivisions(1, false, customSeed)
+    var randomresourceandfactories = randomizeFactoriesAndResources(divisionGen, customSeed);
+    
+    var tradeLuck = Math.max(Math.floor(biasedrng(customSeed) * 10), 1);
+    var money = Math.max(Math.floor(biasedrng(customSeed) * 10_000_000), 1);
+
     return {
       "isExplored": false,
       "isConquered": false,
       "divisions": divisionGen,
       "xPosition": tileX,
       "yPosition": tileY,
-      "countryName": `${cityName}-${citySecondName}`,
+      "countryName": `${cityName}-${stringGen(customSeed, 6)}`,
       "money": money,
       "tradeluck": tradeLuck,
       "relation": 1,
       "factories": randomresourceandfactories["factories"],
       "inventory": randomresourceandfactories["resources"]
     }
+  }
+
+  shouldPlaceCity(x, y, seed, threshold) {
+    function hash(x, y, seed) {
+      let h = x * 374761393 + y * 668265263 + seed * 982451653;
+      h = (h ^ (h >> 13)) * 1274126177;
+      return ((h ^ (h >> 16)) >>> 0) / 4294967295;
+    }
+
+    const rand = hash(x, y, seed);
+    return rand > threshold;
   }
 
   load() {
@@ -53,9 +70,10 @@ class Chunk {
             key = "sprSand";
           } else if (perlinValue >= 0.2 && perlinValue < 0.5) {
             key = "sprGrass";
-            if (Math.random() > 0.95) {
+            if (towns.find(obj => obj.xPosition === tileX && obj.yPosition === tileY)) {
               key = "sprTown";
-              if (towns.find(obj => obj.xPosition === tileX && obj.yPosition === tileY)) return;
+            } else if (this.shouldPlaceCity(tileX, tileY, this.seed, 0.45)) {
+              key = "sprTown";
               towns.push(this.createTownData(tileX, tileY));
             }
           } else {
@@ -99,7 +117,7 @@ class Tile extends Phaser.GameObjects.Sprite {
           fill: '#ffffff',
           fontFamily: 'monospace'
         })
-        
+
         this.text.setDepth(this.depth + 2);;
         this.text.setOrigin(0.5);
         this.text.setShadow(1, 1, 'rgba(0, 0, 0, 0.5)', 5);

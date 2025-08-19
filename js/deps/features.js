@@ -63,26 +63,33 @@ function isNumberNear(number1, number2, threshold) {
   return Math.abs(number1 - number2) <= threshold;
 }
 
-function randbetween(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-
 // Generate Divisions
-function randomizeDivisions(much, strength) {
+function randomizeDivisions(much, strength, seed = Math.random()) {
   var divisions = {}
   for (var i = 0; i < much; i++) {
     var divisionName = faker.company.companyName();
     divisions[divisionName] = {
       "name": divisionName,
-      "strength": (strength ? strength : Math.floor(Math.random() * 100)),
+      "strength": (strength ? strength : Math.floor(biasedrng(seed + i) * 100)),
       "atWar": false
     }
   }
   return divisions
 }
 
+//generate random string
+function stringGen(seed, len) {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < len; i++)
+    text += possible.charAt(Math.floor(biasedrng(seed + i) * possible.length));
+
+  return text;
+}
+
 // Generate Factories and Resources
-function randomizeFactoriesAndResources(strength) {
+function randomizeFactoriesAndResources(strength, seed) {
   var nationStrength = strength[Object.keys(strength)[0]].strength;
   var nationStrengthPercent = Math.max(Math.floor(nationStrength / 100 * 5), 1);
   var factoryKeys = Object.keys(factories);
@@ -90,10 +97,10 @@ function randomizeFactoriesAndResources(strength) {
   var selectedResources = {};
 
   for (var i = 0; i < nationStrengthPercent && factoryKeys.length > 0; i++) {
-    var randomIndex = Math.floor(Math.random() * factoryKeys.length);
+    var randomIndex = Math.floor(biasedrng(seed + i) * factoryKeys.length);
     var factoryName = factoryKeys[randomIndex];
     selectedFactories[factoryName] = factories[factoryName];
-    selectedResources[factories[factoryName].generates] = Math.floor(Math.random() * 100);
+    selectedResources[factories[factoryName].generates] = Math.floor(biasedrng(seed + i) * 100);
     factoryKeys.splice(randomIndex, 1);
   }
 
@@ -117,7 +124,7 @@ function moveResources(from) {
 }
 
 // Invasion and Expeditions
-function march(toX, toY, fromX, fromY, isExpedition, strength, enemyData, tile) {
+function march(toX, toY, fromX, fromY, isExpedition, strength, enemyData) {
   let troop = game.scene.scenes[0].add.sprite(fromX, fromY, 'sprTroop');
   troop.setDepth(troop.depth + 1);
 
@@ -143,10 +150,7 @@ function march(toX, toY, fromX, fromY, isExpedition, strength, enemyData, tile) 
         if (enemyData.isExplored) return;
         enemyData.isExplored = true;
         newNotification('New country discovered: ' + enemyData.countryName)
-        march(fromX, fromY, toX, toY, true, strength, enemyData, tile)
-
-        if (!(tile.text && tile.text.active)) return;
-        tile.text.setText(enemyData.countryName);
+        march(fromX, fromY, toX, toY, true, strength, enemyData)
       } else {
         let tempStrength = enemyData.divisions[Object.keys(enemyData.divisions)[0]].strength;
         enemyData.divisions[Object.keys(enemyData.divisions)[0]].strength -= strength.strength;
@@ -160,7 +164,7 @@ function march(toX, toY, fromX, fromY, isExpedition, strength, enemyData, tile) 
 
           newNotification('You conquered ' + enemyData.countryName)
           newDialog('Resources Obtained', JSON.stringify(enemyData.inventory, '\n', 2).replace(/[,{}" ]/g, " "), "")
-          march(fromX, fromY, toX, toY, true, strength, enemyData, tile)
+          march(fromX, fromY, toX, toY, true, strength, enemyData)
           moveResources(enemyData.inventory)
 
           countriesinwarwith.splice(countriesinwarwith.indexOf(enemyData), 1);
@@ -174,6 +178,102 @@ function march(toX, toY, fromX, fromY, isExpedition, strength, enemyData, tile) 
     }
   }
   troopLoop()
+}
+
+function biasedrng(a) {
+  var x = Math.sin(a++) * 10000;
+  return x - Math.floor(x);
+}
+
+function loadGame() {
+  let allSaves = JSON.parse(localStorage.getItem('saveData')) || [];
+  let saveData = allSaves[allSaves.length - 1];
+
+  if (!saveData) return;
+  saveData = JSON.parse(saveData);
+
+  myOwnCountry = saveData.myOwnCountry;
+  myCountryValues = saveData.myCountryValues;
+  conqueredNations = saveData.conqueredNations;
+  countriesinwarwith = saveData.countriesinwarwith;
+
+  towns = saveData.towns;
+  game.scene.scenes[0].chunks = [];
+  game.scene.scenes[0].seed = saveData.worldSeed;
+  game.scene.scenes[0].chunkAmount = saveData.chunkAmount || 0;
+  game.scene.scenes[0].followPoint.x = saveData.cameraX;
+  game.scene.scenes[0].followPoint.y = saveData.cameraY;
+
+  setTimeout(() => {
+    document.getElementById('selectCountry').innerText = myOwnCountry;
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('ourStats').style.display = 'block';
+    document.getElementById('news').style.visibility = 'visible';
+    game.scene.scenes[0].gameStarted = true;
+    earningsLoop();
+  }, 100);
+}
+
+function openSaves() {
+  let allSaves = JSON.parse(localStorage.getItem('saveData')) || [];
+
+  if (allSaves.length == 0) {
+    document.getElementById('saves').innerText = 'You have no saves!';
+  }
+
+  document.getElementById('saves').innerText = '';
+  allSaves.forEach(element => {
+    saveData = JSON.parse(element)
+
+    let button = document.createElement("button")
+    button.innerText = `${saveData.myOwnCountry}\n${saveData.date}`
+    button.onclick = function () {
+      myOwnCountry = saveData.myOwnCountry;
+      myCountryValues = saveData.myCountryValues;
+      conqueredNations = saveData.conqueredNations;
+      countriesinwarwith = saveData.countriesinwarwith;
+
+      towns = saveData.towns;
+      game.scene.scenes[0].chunks = [];
+      game.scene.scenes[0].seed = saveData.worldSeed;
+      game.scene.scenes[0].chunkAmount = saveData.chunkAmount || 0;
+      game.scene.scenes[0].followPoint.x = saveData.cameraX;
+      game.scene.scenes[0].followPoint.y = saveData.cameraY;
+
+      setTimeout(() => {
+        document.getElementById('selectCountry').innerText = myOwnCountry;
+        document.getElementById('loadingScreen').style.display = 'none';
+        document.getElementById('ourStats').style.display = 'block';
+        document.getElementById('news').style.visibility = 'visible';
+        game.scene.scenes[0].gameStarted = true;
+        earningsLoop();
+      }, 100);
+    }
+
+    document.getElementById('saves').prepend(button);
+  });
+
+  document.getElementById("loadsave").style.display = 'block';
+}
+
+function saveGame() {
+  let saveData = {
+    "myOwnCountry": myOwnCountry,
+    "myCountryValues": myCountryValues,
+    "conqueredNations": conqueredNations,
+    "countriesinwarwith": countriesinwarwith,
+    "towns": towns,
+    "worldSeed": game.scene.scenes[0].seed,
+    "chunkAmount": game.scene.scenes[0].chunkAmount,
+    "cameraX": game.scene.scenes[0].followPoint.x,
+    "cameraY": game.scene.scenes[0].followPoint.y,
+    "date": new Date()
+  }
+
+  saveData = JSON.stringify(saveData, null, 2);
+  let allSaves = JSON.parse(localStorage.getItem('saveData')) || [];
+  allSaves.push(saveData);
+  localStorage.setItem('saveData', JSON.stringify(allSaves));
 }
 
 // Start game and update UI
@@ -206,10 +306,16 @@ window.onload = intro
 setInterval(function () {
   try {
     if (!game.scene.scenes[0].gameStarted) return;
-    document.getElementById('inventorysaya').innerText = JSON.stringify(myCountryValues.inventory, '\n', 2).replace(/[,{}" ]/g, " ");
     document.getElementById('mymoney').innerText = (myOwnCountry == "") ? 0 : myCountryValues.money.toLocaleString();
     document.getElementById('nationsConquered').innerText = conqueredNations.length;
     document.getElementById('factoriesOwned').innerText = countFactories();
+
+    const invData = JSON.parse(JSON.stringify(myCountryValues.inventory));
+    Object.keys(invData).forEach(element => {
+      invData[`${symbols[element]} ${element}`] = invData[element]
+      delete invData[element]
+    });
+    document.getElementById('inventorysaya').innerText = JSON.stringify(invData, '\n', 2).replace(/[,{}" ]/g, " ");
   } catch (error) { }
 })
 
@@ -245,10 +351,21 @@ function earningsLoop() {
     conqueredNations.forEach((name) => {
       let enemyData = towns.find(obj => obj.countryName === name);
       Object.keys(enemyData.factories).forEach((key) => {
-        var value = myCountryValues.factories[key];
+        var value = enemyData.factories[key];
         myCountryValues.inventory[value.generates] += value.level;
       })
     })
+
+    document.getElementById("divisions").innerText = '';
+    Object.values(myCountryValues.divisions).forEach(element => {
+      var button = document.createElement("button")
+      button.innerHTML = `<span>${element.strength}</span><h1>🪖</h1>`
+      button.onclick = function () {
+        manageDivisions(myCountryValues, element.name)
+      }
+
+      document.getElementById("divisions").prepend(button)
+    });
   };
 
   setTimeout(earningsLoop, gameSpeed)
@@ -283,6 +400,11 @@ var factories = {
     "generates": "Goods",
     "level": 1,
     "upgradeResource": "Steel",
+  },
+  "Farm": {
+    "generates": "Crops",
+    "level": 1,
+    "upgradeResource": "Steel",
   }
 }
 
@@ -292,6 +414,16 @@ var resources = {
   "Oil": 15,
   "Gold": 50,
   "Components": 10,
+  "Crops": 10,
+}
+
+var symbols = {
+  "Goods": "📦",
+  "Steel": "🔩",
+  "Oil": "🛢️",
+  "Gold": "🧈",
+  "Components": "⚙️",
+  "Crops": "🌾",
 }
 
 // ================================

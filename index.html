@@ -24,9 +24,10 @@
 
 <body id="window">
   <div class="ourStats" id="ourStats" style="display: none;">
-    <!-- <span style="float: left;;" id="guidebook">
-      Guidebook
-    </span> -->
+    <span style="float: left;" id="savegame"
+      onclick="saveGame(); this.innerText = '✅'; setTimeout(() => { this.innerText = '💾' }, 1000);">
+      💾
+    </span>
 
     <span style="float: left;">
       Conquered: <a id="nationsConquered">0</a> |
@@ -185,6 +186,7 @@
   </div>
 
   <div id="tutorials"></div>
+  <div id="divisions"></div>
 
   <div id="loadingScreen">
     <div class="title">
@@ -194,11 +196,17 @@
         </div>
 
         <h1>Nations Inc</h1>
-        <button onclick="startGame()">Start Game</button>
-        <button>...</button>
-        <button>...</button>
-        <button>...</button>
-        <button>...</button>
+        <button onclick="startGame()">New Game</button>
+        <button onclick="loadGame()">Load Last Game</button>
+        <button onclick="openSaves()">Load Save</button>
+      </div>
+      <div class="cityStats" id="loadsave" style="display: none; margin-top: 15px;">
+        <div class="titlebar">
+          <button onclick="this.parentNode.parentNode.style.display = 'none'">X</button>
+        </div>
+
+        <h1>Load Save</h1>
+        <div id="saves"></div>
       </div>
       <img id="ablogo" style="display: none;" src="content/ABLOGO.png">
     </div>

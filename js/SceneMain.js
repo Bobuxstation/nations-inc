@@ -14,7 +14,7 @@ class SceneMain extends Phaser.Scene {
   }
 
   calculateChunkSize() {
-    const baseChunkSize = 6;
+    const baseChunkSize = 8;
     const screenFactor = Math.min(this.scale.width, this.scale.height) / 800;
     this.chunkSize = Math.max(4, Math.floor(baseChunkSize * screenFactor));
   }
@@ -22,10 +22,10 @@ class SceneMain extends Phaser.Scene {
   create() {
     this.calculateChunkSize();
 
-    this.tileSize = 16;
+    this.tileSize = 12;
     this.cameraSpeed = 10;
     this.gameStarted = false;
-    this.seed = Math.random() * 1000;
+    this.seed = Math.floor(Math.random() * 100000);
 
     this.cameras.main.setZoom(2);
     this.followPoint = new Phaser.Math.Vector2(
@@ -34,6 +34,7 @@ class SceneMain extends Phaser.Scene {
     );
 
     this.chunks = [];
+    this.chunkAmount = 0;
 
     this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
     this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
@@ -69,8 +70,9 @@ class SceneMain extends Phaser.Scene {
         var existingChunk = this.getChunk(x, y);
 
         if (existingChunk == null) {
-          var newChunk = new Chunk(this, x, y, this.seed);
+          var newChunk = new Chunk(this, x, y, this.seed, this.chunkAmount);
           this.chunks.push(newChunk);
+          this.chunkAmount += 1;
         }
       }
     }

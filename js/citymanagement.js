@@ -1,9 +1,9 @@
 let towns = [];
 let countriesinwarwith = [];
-let myOwnCountry = "";
-let gameSpeed = 1000;
 let conqueredNations = []
 let myCountryValues = {};
+let myOwnCountry = "";
+let gameSpeed = 1000;
 
 function clickedTile(foundObject, tile) {
 	if (myOwnCountry == "") {
@@ -44,7 +44,7 @@ function clickedTile(foundObject, tile) {
 
 		document.getElementById('infantrybtn').onclick = function () {
 			closeAllWindows()
-			manageDivisions(foundObject, tile);
+			manageDivisions(foundObject);
 		}
 
 		document.getElementById('managefactories').onclick = function () {
@@ -73,7 +73,7 @@ function clickedTile(foundObject, tile) {
 
 		document.getElementById('infantrybtn').onclick = function () {
 			closeAllWindows()
-			manageDivisions(foundObject, tile);
+			manageDivisions(foundObject);
 		}
 
 		document.getElementById('managefactories').onclick = function () {
@@ -139,7 +139,8 @@ function clickedTile(foundObject, tile) {
 	}
 }
 
-function manageDivisions(foundObject, tile) {
+function manageDivisions(foundObject, divisionName = false) {
+	console.log(foundObject)
 	var divisionData = foundObject.divisions;
 	if (foundObject.countryName == myOwnCountry) divisionData = myCountryValues.divisions;
 
@@ -217,10 +218,12 @@ function manageDivisions(foundObject, tile) {
 					document.getElementById("invadeselectedbtn").onclick = function () {
 						let enemyData = towns.find(obj => obj.countryName === document.getElementById("countriesinwarwith").value);
 						closeAllWindows()
-						march(enemyData.xPosition, enemyData.yPosition, foundObject.xPosition, foundObject.yPosition, false, value, enemyData, tile)
+						march(enemyData.xPosition, enemyData.yPosition, foundObject.xPosition, foundObject.yPosition, false, value, enemyData)
 					}
 				}
 			}
+
+			if (divisionName == value.name) elem.click();
 		})
 	}
 	refreshDivisions()
