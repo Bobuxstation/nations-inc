@@ -223,11 +223,11 @@ function openSaves() {
 
   document.getElementById('saves').innerText = '';
   allSaves.forEach(element => {
-    saveData = JSON.parse(element)
-
-    let button = document.createElement("button")
-    button.innerText = `${saveData.myOwnCountry}\n${saveData.date}`
-    button.onclick = function () {
+    let saveData = JSON.parse(element)
+    let loadbutton = document.createElement("button")
+    
+    loadbutton.innerText = `${saveData.myOwnCountry}\n${saveData.date}`
+    loadbutton.onclick = function () {
       myOwnCountry = saveData.myOwnCountry;
       myCountryValues = saveData.myCountryValues;
       conqueredNations = saveData.conqueredNations;
@@ -250,7 +250,7 @@ function openSaves() {
       }, 100);
     }
 
-    document.getElementById('saves').prepend(button);
+    document.getElementById('saves').prepend(loadbutton);
   });
 
   document.getElementById("loadsave").style.display = 'block';
