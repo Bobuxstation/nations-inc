@@ -140,7 +140,6 @@ function clickedTile(foundObject, tile) {
 }
 
 function manageDivisions(foundObject, divisionName = false) {
-	console.log(foundObject)
 	var divisionData = foundObject.divisions;
 	if (foundObject.countryName == myOwnCountry) divisionData = myCountryValues.divisions;
 
