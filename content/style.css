@@ -178,3 +178,7 @@ ul {
   background:#2d2d2d;
   padding: 10px;
 }
+
+button {
+  cursor: pointer;
+}

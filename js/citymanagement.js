@@ -4,6 +4,7 @@ let conqueredNations = []
 let myCountryValues = {};
 let myOwnCountry = "";
 let gameSpeed = 1000;
+let prevDivision = {};
 
 function clickedTile(foundObject, tile) {
 	if (myOwnCountry == "") {

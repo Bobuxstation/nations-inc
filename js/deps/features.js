@@ -1,6 +1,6 @@
-// ================================
+// ==================================
 // Additional functions for base game
-// ================================
+// ==================================
 
 // Notifications
 function newNotification(text) {
@@ -10,7 +10,8 @@ function newNotification(text) {
   document.documentElement.appendChild(toast)
 
   setTimeout(function () {
-    toast.style.visibility = 'hidden'
+    toast.style.visibility = 'hidden';
+    toast.remove()
   }, 2500);
 }
 
@@ -216,16 +217,13 @@ function loadGame() {
 
 function openSaves() {
   let allSaves = JSON.parse(localStorage.getItem('saveData')) || [];
-
-  if (allSaves.length == 0) {
-    document.getElementById('saves').innerText = 'You have no saves!';
-  }
-
   document.getElementById('saves').innerText = '';
+  if (allSaves.length == 0) document.getElementById('saves').innerText = 'You have no saves!';
+
   allSaves.forEach(element => {
     let saveData = JSON.parse(element)
     let loadbutton = document.createElement("button")
-    
+
     loadbutton.innerText = `${saveData.myOwnCountry}\n${saveData.date}`
     loadbutton.onclick = function () {
       myOwnCountry = saveData.myOwnCountry;
@@ -339,6 +337,23 @@ function countFactories() {
   };
 }
 
+//compare division for updating menu
+function compareDivision(object1, object2) {
+  const keys1 = Object.keys(object1);
+  const keys2 = Object.keys(object2);
+
+  if (keys1.length !== keys2.length) {
+    return false;
+  }
+
+  for (const key of keys1) {
+    const areObjects = typeof object1[key] === 'object' && object1[key] !== null && typeof object2[key] === 'object' && object2[key] !== null;
+    if (areObjects && !compareDivision(object1[key], object2[key]) || !areObjects && object1[key] !== object2[key]) return false;
+  }
+
+  return true;
+}
+
 // Loop earnings
 function earningsLoop() {
   if (!myOwnCountry == "") {
@@ -356,16 +371,17 @@ function earningsLoop() {
       })
     })
 
-    document.getElementById("divisions").innerText = '';
-    Object.values(myCountryValues.divisions).forEach(element => {
-      var button = document.createElement("button")
-      button.innerHTML = `<span>${element.strength}</span><h1>🪖</h1>`
-      button.onclick = function () {
-        manageDivisions(myCountryValues, element.name)
-      }
+    if (!compareDivision(prevDivision, myCountryValues.divisions)) {
+      document.getElementById("divisions").innerText = '';
+      Object.values(myCountryValues.divisions).forEach(element => {
+        var button = document.createElement("button");
+        button.innerHTML = `<span>${element.strength}</span><h1>🪖</h1>`;
+        button.onclick = () => manageDivisions(myCountryValues, element.name);
+        document.getElementById("divisions").prepend(button)
+      });
 
-      document.getElementById("divisions").prepend(button)
-    });
+      prevDivision = JSON.parse(JSON.stringify(myCountryValues.divisions));
+    }
   };
 
   setTimeout(earningsLoop, gameSpeed)
